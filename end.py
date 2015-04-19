@@ -18,10 +18,10 @@ def draw_end(screen, background, stars, display_txt):
     background.blit(over_str, (
         background.get_rect().centerx - over_str.get_width() / 2,
         background.get_rect().centery - 100))
+    # Draw result text
     display_txt.set_pos(
         (background.get_rect().centerx - display_txt.text_rect.width / 2,
          background.get_rect().centery))
     display_txt.draw()
-
     screen.blit(background, (0, 0))
     pygame.display.flip()

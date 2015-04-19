@@ -127,10 +127,32 @@ class Enemy1(pygame.sprite.Sprite):
         self.pos_x = random.randint(
             0, self.background.get_width() - self.rect.width)
         self.pos_y = pos_y
-        self.speed = 1.5+random.random()
+        self.speed = 1.5 + random.random()
+        self.change_dir = True
+        self.time_to_change = 10
+        self.xplus = False
+        self.xminus = False
 
     def update(self):
         self.pos_y += self.speed
+        self.time_to_change -= 1
+        if self.time_to_change == 0:
+            self.change_dir = not self.change_dir
+            self.time_to_change = 10
+        if self.change_dir:
+            self.change_dir = False
+            self.time_to_change = 10
+            self.xplus = False
+            self.xminus = False
+            randn = random.random()
+            if randn < .33:
+                self.xplus = True
+            elif 0.33 <= randn < 0.66:
+                self.xminus = True
+        if self.xplus:
+            self.pos_x += 2
+        elif self.xminus:
+            self.pos_x -= 2
         self.curr_img = self.imgs[self.img_idx % 4]
         self.img_idx += 1
         if self.pos_y > self.background.get_height()-1:
