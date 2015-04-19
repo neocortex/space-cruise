@@ -85,10 +85,14 @@ def game_loop(screen, background, clock):
     rocks = pygame.sprite.Group()
     explosions = pygame.sprite.Group()
     # Init some variables
+    font = pygame.font.SysFont(u'tlwgtypewriter', 15)
     enemy_timer = 2000
     dead = False
     auslauf = 40
     move = 'center'
+    frame_count = 0
+    frame_rate = 30
+    kills = 0
     # Loop
     running = True
     while running:
@@ -152,6 +156,23 @@ def game_loop(screen, background, clock):
             stars.add(Star(background))
             stars.update()
             enemy_timer -= clock.get_time()
+            total_time = frame_count // frame_rate
+            seconds = total_time % 60
+            text_rect = pygame.draw.rect(
+                background, (255, 255, 255), (1, 1, 90, 50), 2)
+            time_str = font.render('Time  {:2}'.format(
+                seconds), True, (255, 255, 255))
+            time_rect = time_str.get_rect()
+            time_rect.centery = text_rect.centery - text_rect.height/4
+            time_rect.centerx = text_rect.centerx
+            kills_str = font.render('Kills {:2}'.format(
+                kills), True, (255, 255, 255))
+            kills_rect = kills_str.get_rect()
+            kills_rect.centery = text_rect.centery + text_rect.height/4
+            kills_rect.left = time_rect.left
+            frame_count += 1
+            background.blit(time_str, time_rect)
+            background.blit(kills_str, kills_rect)
             if enemy_timer < 0:
                 enemies1.add(Enemy1(background))
                 enemies2.add(Enemy2(background))
@@ -167,6 +188,7 @@ def game_loop(screen, background, clock):
                 enemies2, bullets, 1, 1))
             for collision in collisions.keys():
                 explosions.add(Explosion(background, collision.rect))
+                kills += 1
             collide = pygame.sprite.spritecollide(ship, rocks, False)
             collide2 = pygame.sprite.spritecollide(ship, enemies1, False)
             collide3 = pygame.sprite.spritecollide(ship, enemies2, False)

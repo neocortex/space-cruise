@@ -14,7 +14,7 @@ Pygame: ``pip install git+http://github.com/xamox/pygame``
 ``python space_cruise.py``
 
 
-# Screenshots
+## Screenshots
 ![Alt title](images/title.png)
 
 ![Alt game](images/game.png)
