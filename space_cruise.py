@@ -1,13 +1,13 @@
-import sys
 import pygame
+import sys
 
-from entities import (
-    Bullet, Enemy1, Enemy2, Explosion, Rock, Spaceship, Star)
-from title import draw_title, title_stars
 from end import draw_end
+from entities import Bullet, Enemy1, Enemy2, Explosion, Rock, Spaceship, Star
+from title import draw_title, title_stars
 
 
 def title_loop(screen, background, clock):
+    """ The title screen loop. """
     # Start music
     pygame.mixer.music.load(
         'sounds/Hudsons Adventure Island - NES - Title Theme.mp3')
@@ -126,24 +126,24 @@ def game_loop(screen, background, clock):
                     if event.key == pygame.K_SPACE:
                         bullets.add(Bullet(ship, background))
                 elif (event.type == pygame.KEYUP and
-                     (not key[pygame.K_LEFT] and not key[pygame.K_DOWN]
-                      and not key[pygame.K_UP] and not key[pygame.K_RIGHT])):
+                      (not key[pygame.K_LEFT] and not key[pygame.K_DOWN]
+                       and not key[pygame.K_UP] and not key[pygame.K_RIGHT])):
                     move = 'center'
                 elif (event.type == pygame.KEYUP and
-                     (not key[pygame.K_LEFT] and not key[pygame.K_DOWN]
-                      and not key[pygame.K_UP] and key[pygame.K_RIGHT])):
+                      (not key[pygame.K_LEFT] and not key[pygame.K_DOWN]
+                       and not key[pygame.K_UP] and key[pygame.K_RIGHT])):
                     move = 'right'
                 elif (event.type == pygame.KEYUP and
-                     (key[pygame.K_LEFT] and not key[pygame.K_DOWN]
-                      and not key[pygame.K_UP] and not key[pygame.K_RIGHT])):
+                      (key[pygame.K_LEFT] and not key[pygame.K_DOWN]
+                       and not key[pygame.K_UP] and not key[pygame.K_RIGHT])):
                     move = 'left'
                 elif (event.type == pygame.KEYUP and
-                     (not key[pygame.K_LEFT] and not key[pygame.K_DOWN]
-                      and key[pygame.K_UP] and not key[pygame.K_RIGHT])):
+                      (not key[pygame.K_LEFT] and not key[pygame.K_DOWN]
+                       and key[pygame.K_UP] and not key[pygame.K_RIGHT])):
                     move = 'up'
                 elif (event.type == pygame.KEYUP and
-                     (not key[pygame.K_LEFT] and key[pygame.K_DOWN]
-                      and not key[pygame.K_UP] and not key[pygame.K_RIGHT])):
+                      (not key[pygame.K_LEFT] and key[pygame.K_DOWN]
+                       and not key[pygame.K_UP] and not key[pygame.K_RIGHT])):
                     move = 'down'
             # Update entities
             background.fill((0, 0, 0))
@@ -178,7 +178,8 @@ def game_loop(screen, background, clock):
         screen.blit(background, (0, 0))
         pygame.display.flip()
 
-if __name__ == "__main__":
+
+def main():
     # Init Pygame
     pygame.init()
     # Set screen
@@ -192,3 +193,7 @@ if __name__ == "__main__":
     # Keys that are held down will generate multiple KEYDOWN events
     # pygame.key.set_repeat(1,30)
     title_loop(screen, background, clock)
+
+
+if __name__ == "__main__":
+    main()
