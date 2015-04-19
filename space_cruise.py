@@ -46,7 +46,7 @@ def title_loop(screen, background, clock):
             draw_title(screen, background, stars, draw_msg)
 
 
-def end_loop(screen, background, clock):
+def end_loop(screen, background, clock, display_txt):
     """ The game over loop. """
     stars = title_stars(background)
     pygame.mixer.music.load(
@@ -65,7 +65,7 @@ def end_loop(screen, background, clock):
                 elif event.key == pygame.K_ESCAPE:
                     running = False
         clock.tick(100)
-        draw_end(screen, background, stars)
+        draw_end(screen, background, stars, display_txt)
 
 
 def game_loop(screen, background, clock):
@@ -106,7 +106,7 @@ def game_loop(screen, background, clock):
             rocks.update()
             if not auslauf:
                 running = False
-                end_loop(screen, background, clock)
+                end_loop(screen, background, clock, display_txt)
         else:
             clock.tick(30)
             # Process keyboard input
