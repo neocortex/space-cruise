@@ -98,6 +98,72 @@ class SpaceCruise(object):
             self.running = False
             self.end_loop()
 
+    def process_input(self):
+        # Process keyboard input
+        move_dict = {pygame.K_LEFT: 'left', pygame.K_RIGHT: 'right',
+                     pygame.K_UP: 'up', pygame.K_DOWN: 'down'}
+        for event in pygame.event.get():
+            key = pygame.key.get_pressed()
+            if event.type == pygame.QUIT:
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key in move_dict:
+                    self.move = move_dict[event.key]
+                elif event.key == pygame.K_ESCAPE:
+                    sys.exit()
+                if event.key == pygame.K_SPACE:
+                    self.bullets.add(Bullet(self.ship, self.background))
+            elif event.type == pygame.KEYUP:
+                if not any(key):
+                    self.move = 'center'
+                if sum(key) == 1:
+                    if key[pygame.K_RIGHT]:
+                        self.move = 'right'
+                    elif key[pygame.K_LEFT]:
+                        self.move = 'left'
+                    elif key[pygame.K_UP]:
+                        self.move = 'up'
+                    elif key[pygame.K_DOWN]:
+                        self.move = 'down'
+
+    def update_all(self):
+        self.background.fill((0, 0, 0))
+        self.ship.update(self.move)
+        self.bullets.update()
+        self.stars.add(Star(self.background))
+        self.stars.update()
+        self.enemy_timer -= self.clock.get_time()
+        if self.enemy_timer < 0:
+            self.enemies1.add(Enemy1(self.background))
+            self.enemies2.add(Enemy2(self.background))
+            self.rocks.add(Rock(self.background))
+            self.enemy_timer = 2000
+        self.enemies1.update()
+        self.enemies2.update()
+        self.rocks.update()
+
+    def check_collisions(self):
+        self.collisions = pygame.sprite.groupcollide(
+            self.enemies1, self.bullets, 1, 1)
+        self.collisions.update(pygame.sprite.groupcollide(
+            self.enemies2, self.bullets, 1, 1))
+        for collision in self.collisions.keys():
+            self.explosions.add(
+                Explosion(self.background, collision.rect))
+            self.display_txt.add_kill()
+        collide = pygame.sprite.spritecollide(
+            self.ship, self.rocks, False)
+        collide2 = pygame.sprite.spritecollide(
+            self.ship, self.enemies1, False)
+        collide3 = pygame.sprite.spritecollide(
+            self.ship, self.enemies2, False)
+        if collide or collide2 or collide3:
+            self.explosions.add(
+                Explosion(self.background, self.ship.rect))
+            self.ship.kill()
+            self.dead = True
+        self.explosions.update()
+
     def game_loop(self):
         """ The game loop. """
         # Init main loop
@@ -108,83 +174,11 @@ class SpaceCruise(object):
                 self.preparing_end()
             else:
                 self.clock.tick(30)
-                # Process keyboard input
-                for event in pygame.event.get():
-                    key = pygame.key.get_pressed()
-                    if event.type == pygame.QUIT:
-                        sys.exit()
-                    elif event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_LEFT:
-                            self.move = 'left'
-                        elif event.key == pygame.K_RIGHT:
-                            self.move = 'right'
-                        elif event.key == pygame.K_UP:
-                            self.move = 'up'
-                        elif event.key == pygame.K_DOWN:
-                            self.move = 'down'
-                        elif event.key == pygame.K_ESCAPE:
-                            sys.exit()
-                        if event.key == pygame.K_SPACE:
-                            self.bullets.add(Bullet(self.ship, self.background))
-                    elif (event.type == pygame.KEYUP and
-                          (not key[pygame.K_LEFT] and not key[pygame.K_DOWN]
-                           and not key[pygame.K_UP]
-                           and not key[pygame.K_RIGHT])):
-                        self.move = 'center'
-                    elif (event.type == pygame.KEYUP and
-                          (not key[pygame.K_LEFT] and not key[pygame.K_DOWN]
-                           and not key[pygame.K_UP] and key[pygame.K_RIGHT])):
-                        self.move = 'right'
-                    elif (event.type == pygame.KEYUP and
-                          (key[pygame.K_LEFT] and not key[pygame.K_DOWN]
-                           and not key[pygame.K_UP]
-                           and not key[pygame.K_RIGHT])):
-                        self.move = 'left'
-                    elif (event.type == pygame.KEYUP and
-                          (not key[pygame.K_LEFT] and not key[pygame.K_DOWN]
-                           and key[pygame.K_UP] and not key[pygame.K_RIGHT])):
-                        self.move = 'up'
-                    elif (event.type == pygame.KEYUP and
-                          (not key[pygame.K_LEFT] and key[pygame.K_DOWN]
-                           and not key[pygame.K_UP]
-                           and not key[pygame.K_RIGHT])):
-                        self.move = 'down'
+                self.process_input()
                 # Update entities
-                self.background.fill((0, 0, 0))
-                self.ship.update(self.move)
-                self.bullets.update()
-                self.stars.add(Star(self.background))
-                self.stars.update()
-                self.enemy_timer -= self.clock.get_time()
-                if self.enemy_timer < 0:
-                    self.enemies1.add(Enemy1(self.background))
-                    self.enemies2.add(Enemy2(self.background))
-                    self.rocks.add(Rock(self.background))
-                    self.enemy_timer = 2000
-                self.enemies1.update()
-                self.enemies2.update()
-                self.rocks.update()
+                self.update_all()
                 # Check collisions
-                self.collisions = pygame.sprite.groupcollide(
-                    self.enemies1, self.bullets, 1, 1)
-                self.collisions.update(pygame.sprite.groupcollide(
-                    self.enemies2, self.bullets, 1, 1))
-                for collision in self.collisions.keys():
-                    self.explosions.add(
-                        Explosion(self.background, collision.rect))
-                    self.display_txt.add_kill()
-                collide = pygame.sprite.spritecollide(
-                    self.ship, self.rocks, False)
-                collide2 = pygame.sprite.spritecollide(
-                    self.ship, self.enemies1, False)
-                collide3 = pygame.sprite.spritecollide(
-                    self.ship, self.enemies2, False)
-                if collide or collide2 or collide3:
-                    self.explosions.add(
-                        Explosion(self.background, self.ship.rect))
-                    self.ship.kill()
-                    self.dead = True
-                self.explosions.update()
+                self.check_collisions()
                 self.display_txt.update()
             self.screen.blit(self.background, (0, 0))
             pygame.display.flip()
