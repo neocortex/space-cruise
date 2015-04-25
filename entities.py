@@ -48,9 +48,6 @@ class Spaceship(pygame.sprite.Sprite):
         self.img_idx += 1
         self.pos_x += (self.mv_left + self.mv_right)
         self.pos_y += (self.mv_up + self.mv_down)
-        # Update rect for collision detection
-        self.rect = self.rect.move(
-            (self.mv_left + self.mv_right), (self.mv_up + self.mv_down))
         # Make sure character does not leave screen bounderies
         if self.pos_x > (self.background.get_rect().right - self.rect.width):
             self.pos_x = (self.background.get_rect().right - self.rect.width)
@@ -62,6 +59,9 @@ class Spaceship(pygame.sprite.Sprite):
                           - self.rect.height)
         elif self.pos_y < 0:
             self.pos_y = 0
+        # Update rect for collision detection
+        self.rect = pygame.Rect(
+            self.pos_x, self.pos_y, self.rect[2], self.rect[3])
         self.background.blit(self.curr_img, (self.pos_x, self.pos_y))
 
 
