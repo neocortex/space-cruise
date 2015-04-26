@@ -42,12 +42,10 @@ class DisplayText(object):
             self.text_rect.centery + self.text_rect.height / 4)
         self.kills_rect.left = self.time_rect.left
 
-
     def draw(self):
         self.background.blit(self.time_str, self.time_rect)
         self.background.blit(self.kills_str, self.kills_rect)
         pygame.draw.rect(self.background, WHITE, self.text_rect, 2)
-
 
     def update(self):
         self.frame_count += 1
@@ -58,3 +56,9 @@ class DisplayText(object):
         self.kills_str = self.font.render(
             'Kills {:2}'.format(self.kills), True, WHITE)
         self.draw()
+
+    def reset(self):
+        self.frame_count = 0
+        self.seconds = 0
+        self.kills = 0
+        self.set_pos((1, 1))

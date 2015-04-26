@@ -2,7 +2,7 @@ import pygame
 import sys
 
 from display_text import DisplayText
-from end import draw_end
+from end import EndScreen
 from entities import Bullet, Enemy1, Enemy2, Explosion, Rock, Spaceship, Star
 from title import TitleScreen
 
@@ -13,7 +13,10 @@ class SpaceCruise(object):
         self.screen = screen
         self.background = background
         self.clock = clock
+        self.display_txt = DisplayText(self.background)
         self.title = TitleScreen(self.screen, self.background, self.clock)
+        self.end = EndScreen(
+            self.screen, self.background, self.clock, self.display_txt)
 
     def play_music(self, part):
         tracks = {
@@ -41,7 +44,6 @@ class SpaceCruise(object):
         self.enemies2.add(Enemy2(self.background))
         self.rocks = pygame.sprite.Group()
         self.explosions = pygame.sprite.Group()
-        self.display_txt = DisplayText(self.background)
         # Init some variables
         self.enemy_timer = 2000
         self.dead = False
@@ -61,7 +63,7 @@ class SpaceCruise(object):
         self.rocks.update()
         if not self.auslauf:
             self.running = False
-            self.end_loop()
+            self.run_end()
 
     def process_input(self):
         # Process keyboard input
@@ -148,24 +150,15 @@ class SpaceCruise(object):
             self.screen.blit(self.background, (0, 0))
             pygame.display.flip()
 
-    def end_loop(self):
-        """ The game over loop. """
-        self.stars = title_stars(self.background)
+    def run_end(self):
         self.play_music('end')
-        running = True
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_RETURN:
-                        self.stop_music()
-                        running = False
-                        self.game_loop()
-                    elif event.key == pygame.K_ESCAPE:
-                        running = False
-            self.clock.tick(100)
-            draw_end(self.screen, self.background, self.stars, self.display_txt)
+        result = self.end.end_loop()
+        if result == 'restart':
+            self.stop_music()
+            self.display_txt.reset()
+            self.game_loop()
+        elif result == 'quit':
+            sys.exit()
 
     def run_title(self):
         self.play_music('title')
@@ -175,6 +168,7 @@ class SpaceCruise(object):
             self.game_loop()
         elif result == 'quit':
             sys.exit()
+
 
 def main():
     # Init Pygame
