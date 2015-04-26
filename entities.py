@@ -112,7 +112,7 @@ class Star(pygame.sprite.Sprite):
              random.randint(0, 255)))
 
 
-class Enemy1(pygame.sprite.Sprite):
+class EnemyOne(pygame.sprite.Sprite):
     """ Enemy 1 object class. """
     def __init__(self, background, pos_y=-50):
         pygame.sprite.Sprite.__init__(self)
@@ -162,7 +162,7 @@ class Enemy1(pygame.sprite.Sprite):
         self.background.blit(self.curr_img, (self.pos_x, self.pos_y))
 
 
-class Enemy2(pygame.sprite.Sprite):
+class EnemyTwo(pygame.sprite.Sprite):
     """ Enemy 2 object class. """
     def __init__(self, background, pos_y=-50):
         pygame.sprite.Sprite.__init__(self)

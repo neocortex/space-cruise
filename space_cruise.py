@@ -3,7 +3,7 @@ import sys
 
 from display_text import DisplayText
 from end import EndScreen
-from entities import Bullet, Enemy1, Enemy2, Explosion, Rock, Spaceship, Star
+from entities import Bullet, EnemyOne, EnemyTwo, Explosion, Rock, Spaceship, Star
 from title import TitleScreen
 
 
@@ -39,9 +39,9 @@ class SpaceCruise(object):
         for s in xrange(self.background.get_height() / 10):
             self.stars.add(Star(self.background, s * 10))
         self.enemies1 = pygame.sprite.Group()
-        self.enemies1.add(Enemy1(self.background))
+        self.enemies1.add(EnemyOne(self.background))
         self.enemies2 = pygame.sprite.Group()
-        self.enemies2.add(Enemy2(self.background))
+        self.enemies2.add(EnemyTwo(self.background))
         self.rocks = pygame.sprite.Group()
         self.explosions = pygame.sprite.Group()
         # Init some variables
@@ -101,8 +101,8 @@ class SpaceCruise(object):
         self.stars.update()
         self.enemy_timer -= self.clock.get_time()
         if self.enemy_timer < 0:
-            self.enemies1.add(Enemy1(self.background))
-            self.enemies2.add(Enemy2(self.background))
+            self.enemies1.add(EnemyOne(self.background))
+            self.enemies2.add(EnemyTwo(self.background))
             self.rocks.add(Rock(self.background))
             self.enemy_timer = 2000
         self.enemies1.update()
@@ -150,21 +150,21 @@ class SpaceCruise(object):
             self.screen.blit(self.background, (0, 0))
             pygame.display.flip()
 
+    def run_title(self):
+        self.play_music('title')
+        result = self.title.title_loop()
+        if result == 'start':
+            self.stop_music()
+            self.game_loop()
+        elif result == 'quit':
+            sys.exit()
+
     def run_end(self):
         self.play_music('end')
         result = self.end.end_loop()
         if result == 'restart':
             self.stop_music()
             self.display_txt.reset()
-            self.game_loop()
-        elif result == 'quit':
-            sys.exit()
-
-    def run_title(self):
-        self.play_music('title')
-        result = self.title.title_loop()
-        if result == 'start':
-            self.stop_music()
             self.game_loop()
         elif result == 'quit':
             sys.exit()
