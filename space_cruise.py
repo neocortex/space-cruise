@@ -4,7 +4,7 @@ import sys
 from display_text import DisplayText
 from end import draw_end
 from entities import Bullet, Enemy1, Enemy2, Explosion, Rock, Spaceship, Star
-from title import draw_title, title_stars
+from title import TitleScreen
 
 
 class SpaceCruise(object):
@@ -13,42 +13,7 @@ class SpaceCruise(object):
         self.screen = screen
         self.background = background
         self.clock = clock
-
-    def title_loop(self):
-        """ The title screen loop. """
-        # Start music
-        self.play_music('title')
-        # Get title screen stars
-        stars = title_stars(self.background)
-        # Variable to draw 'enter message'
-        draw_msg = True
-        draw_msg_time = 500
-        # Loop
-        running = True
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_RETURN:
-                        self.stop_music()
-                        running = False
-                        self.game_loop()
-                    elif event.key == pygame.K_ESCAPE:
-                        running = False
-            time_passed = self.clock.tick(100)
-            # Blinking message routine
-            if draw_msg_time >= 1000:
-                draw_msg = True
-            elif draw_msg_time <= 0:
-                draw_msg = False
-            if draw_msg:
-                draw_msg_time -= time_passed*2
-            else:
-                draw_msg_time += time_passed*2
-            # Draw title screen
-            if running:
-                draw_title(self.screen, self.background, stars, draw_msg)
+        self.title = TitleScreen(self.screen, self.background, self.clock)
 
     def play_music(self, part):
         tracks = {
@@ -202,6 +167,14 @@ class SpaceCruise(object):
             self.clock.tick(100)
             draw_end(self.screen, self.background, self.stars, self.display_txt)
 
+    def run_title(self):
+        self.play_music('title')
+        result = self.title.title_loop()
+        if result == 'start':
+            self.stop_music()
+            self.game_loop()
+        elif result == 'quit':
+            sys.exit()
 
 def main():
     # Init Pygame
@@ -216,7 +189,7 @@ def main():
     background = pygame.Surface(screen.get_size())
     # Create game object
     space_cruise = SpaceCruise(screen, background, clock)
-    space_cruise.title_loop()
+    space_cruise.run_title()
 
 if __name__ == "__main__":
     main()
